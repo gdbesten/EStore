@@ -43,12 +43,16 @@ namespace ShoppingCartServiceTests
         public void IsValidCompleteAddressResultIsTrue()
         {
             // Arrange
-            var address = new Address
-            {
-                Street = "Street",
-                City = "City",
-                Country = "Country"
-            };
+            var address = new AddressBuilder()
+                .WithStreet("Street")
+                .WithCity("City")
+                .WithCountry("Street")
+                .Build();
+            // {
+            //     Street = "Street",
+            //     City = "City",
+            //     Country = "Country"
+            // };
 
             // Act
             var result = _addressValidator.IsValid(address);
@@ -56,5 +60,33 @@ namespace ShoppingCartServiceTests
             // Assert
             Assert.True(result);
         }
+
+        [InlineData(null, null, null, false)]
+        [InlineData("street", null, null, false)]
+        [InlineData(null, "city", null, false)]
+        [InlineData(null, null, "country", false)]
+        [InlineData("street", "city", "country", true)]
+        [Theory]
+        public void AdressValidationTest(
+            string street,
+            string city,
+            string country,
+            bool validationResult)
+        {
+            // Arrange
+            var address = new Address
+            {
+                Street = street,
+                City = city,
+                Country = country
+            };
+
+            // Act
+            var result = _addressValidator.IsValid(address);
+
+            // Assert
+            Assert.Equal(validationResult, result);
+        }
+
     }
 }

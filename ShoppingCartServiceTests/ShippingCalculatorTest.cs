@@ -83,5 +83,45 @@ namespace ShoppingCartServiceTests
             Assert.Equal(20, result);
 
         }
+
+        [InlineData(ShippingMethod.Standard, 20)]
+        [InlineData(ShippingMethod.Expedited, 24)]
+        [InlineData(ShippingMethod.Priority, 40)]
+        [InlineData(ShippingMethod.Express, 50)]
+        [Theory]
+        public void ShippinCalculate(ShippingMethod shippingMethod, int price)
+        {
+            // Arrange
+            var cart = new Cart
+            {
+                ShippingMethod = shippingMethod,
+                CustomerType = CustomerType.Standard,
+                ShippingAddress = _address,
+                Items = new List<Item>
+                {
+                    new Item
+                    {
+                        ProductId = "0001",
+                        ProductName = "Product 1",
+                        Price = 10,
+                        Quantity = 5
+                    },
+                    new Item
+                    {
+                        ProductId = "0002",
+                        ProductName = "Product 2",
+                        Price = 10,
+                        Quantity = 15
+                    }
+                }
+            };
+
+            // Act
+            var result = _shippingCalculator.CalculateShippingCost(cart);
+
+            // Assert, 5 * 1 + 15 * 1 = 20
+            Assert.Equal(price, result);
+
+        }
     }
 }
